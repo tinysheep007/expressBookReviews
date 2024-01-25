@@ -4,22 +4,26 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-public_users.post("/register", (req,res) => {
-  //Write your code here
-  const username = req.body.username;
-  const password = req.body.password;
-
-  if (username && password) {
-    if (!isValid(username)) { 
-      users.push({"username":username,"password":password});
-      return res.status(200).json({message: "User successfully registred. Now you can login"});
+public_users.post("/register", (req, res) => {
+    // Extract username and password from the request body
+    const { username, password } = req.body;
+  
+    // Check if both username and password are provided
+    if (username && password) {
+      // Check if the username is already registered
+      if (!isValid(username)) {
+        // Register the new user
+        users.push({ "username": username, "password": password });
+        return res.status(200).json({ message: "User successfully registered. Now you can login" });
+      } else {
+        // Username already exists, return a 400 Bad Request status
+        return res.status(400).json({ message: "User already exists!" });
+      }
     } else {
-      return res.status(404).json({message: "User already exists!"});    
+      // Either username or password is missing, return a 400 Bad Request status
+      return res.status(400).json({ message: "Username and password are required for registration." });
     }
-  } 
-  return res.status(404).json({message: "Unable to register user."});
-
-});
+  });
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
