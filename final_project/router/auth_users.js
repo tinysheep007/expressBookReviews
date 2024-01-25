@@ -58,11 +58,11 @@ regd_users.post("/login", (req,res) => {
   }
 });
 
-//testing ruote
+// Add a book review
 regd_users.put("/testput/review/:isbn", (req,res)=>{
     // let isbn = req.params.isbn;
     // res.send("ruote it's ok finish "+isbn)
-    
+
     const username = req.session.authorization.username; // Get username from session
     const isbn = req.params.isbn;
     const reviewText = req.body.review;
@@ -91,36 +91,15 @@ regd_users.put("/testput/review/:isbn", (req,res)=>{
 })
 
 
-// Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-    res.send("got it")
-    // const username = req.session.authorization.username; // Get username from session
-    // const isbn = req.params.isbn;
-    // const reviewText = req.body.review;
-  
-    // if (!username || !isbn || !reviewText) {
-    //   return res.status(400).json({ message: "Invalid request. Please provide username, ISBN, and review text." });
-    // }
-  
-    // // Check if the book with the specified ISBN exists
-    // if (!books.hasOwnProperty(isbn)) {
-    //   return res.status(404).json({ message: "Book not found for the specified ISBN" });
-    // }
-  
-    // // Check if the user has already posted a review for the same ISBN
-    // if (books[isbn].reviews.hasOwnProperty(username)) {
-    //   // Modify existing review
-    //   books[isbn].reviews[username] = reviewText;
-    //   return res.status(200).json({ message: "Review updated successfully" });
-    // }
-  
-    // // Add a new review for the ISBN and user
-    // books[isbn].reviews[username] = reviewText;
-    // return res.status(200).json({ message: "Review added successfully" });
-});
+
+
 
 // Delete a book review
-regd_users.delete("/auth/review/:isbn", (req, res) => {
+regd_users.delete("/testdelete/review/:isbn",(req,res)=>{
+    // let isbn = req.params.isbn;
+    // res.send("got it "+isbn);
+
+
     const username = req.session.authorization.username; // Get username from session
     const isbn = req.params.isbn;
   
@@ -142,7 +121,9 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     delete books[isbn].reviews[username];
   
     return res.status(200).json({ message: "Review deleted successfully" });
-  });
+})
+
+
   
 
 module.exports.authenticated = regd_users;

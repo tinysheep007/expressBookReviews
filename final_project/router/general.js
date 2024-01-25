@@ -2,6 +2,7 @@ const express = require('express');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
+const axios = require('axios');
 const public_users = express.Router();
 
 public_users.post("/register", (req, res) => {
@@ -31,13 +32,51 @@ public_users.get('/',function (req, res) {
   res.status(200).send(JSON.stringify(books,null,4));
 });
 
+// Task 10
+// Get the book list available in the shop
+public_users.get('/asyncGetAllBooks', async function (req, res) {
+    try {
+      // Make an asynchronous request to fetch the list of books
+      const response = await axios.get('https://pzxiaomie-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/');
+  
+      // Assuming the books are returned in the response data
+      const bookList = response.data;
+  
+      res.status(200).json(bookList);
+    } catch (error) {
+      console.error('Error fetching books:', error.message);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
   res.send(books[isbn])
  });
+
+// Task 11
+ // Get the book details based on ISBN
+public_users.get('/asychIsbn/:isbn', async function (req, res) {
+    try {
+      // Extract ISBN from the request parameters
+      const isbn = req.params.isbn;
   
+      // Make an asynchronous request to fetch book details
+      const response = await axios.get(`https://pzxiaomie-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/isbn/${isbn}`);
+  
+      // Assuming the book details are returned in the response data
+      const bookDetails = response.data;
+  
+      res.status(200).json(bookDetails);
+    } catch (error) {
+      console.error('Error fetching book details:', error.message);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+
+
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
@@ -52,6 +91,31 @@ public_users.get('/author/:author',function (req, res) {
 
   return res.status(200).json(matchingBooks);
 });
+
+// Task 12
+// Get the book details based on author using async-await and Axios
+public_users.get('/asychauthor/:author', async function (req, res) {
+    try {
+      // Extract author from the request parameters
+      const author = req.params.author;
+  
+      // Make an asynchronous request to fetch book details
+      const response = await axios.get(`https://pzxiaomie-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/author/${author}`);
+  
+      // Assuming the book details are returned in the response data
+      const bookDetails = response.data;
+  
+      if (bookDetails.length === 0) {
+        return res.status(404).json({ message: `No books found for the specified author: ${author}` });
+      }
+  
+      res.status(200).json(bookDetails);
+    } catch (error) {
+      console.error('Error fetching book details:', error.message);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+
 
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
@@ -89,6 +153,31 @@ public_users.get('/review/:isbn', function (req, res) {
   // If reviews are available, send a 200 response with the reviews
   return res.status(200).json(bookReviews);
 });
+
+// Task 13
+// asych Get book reviews
+// Get the book details based on title using async-await and Axios
+public_users.get('/asychtitle/:title', async function (req, res) {
+    try {
+      // Extract title from the request parameters
+      const title = req.params.title;
+  
+      // Make an asynchronous request to fetch book details
+      const response = await axios.get(`https://pzxiaomie-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/title/${title}`);
+  
+      // Assuming the book details are returned in the response data
+      const bookDetails = response.data;
+  
+      if (bookDetails.length === 0) {
+        return res.status(404).json({ message: `No books found for the specified title: ${title}` });
+      }
+  
+      res.status(200).json(bookDetails);
+    } catch (error) {
+      console.error('Error fetching book details:', error.message);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
 
 
 module.exports.general = public_users;
